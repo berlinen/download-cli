@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "download-template": "index.js",
+    "dt": "index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +14,10 @@
   "engines": {
     "node": ">=12.0.0"
   },
+  "files": [
+    "index.js",
+    "template-*"
+  ],
   "license": "ISC",
   "dependencies": {
     "enquirer": "^2.3.6",

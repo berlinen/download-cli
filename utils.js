@@ -20,6 +20,8 @@ const emptyDir = (dir) => {
   }
 }
 
+const copy = ()
+
 module.exports = {
   emptyDir
 }

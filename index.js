@@ -11,7 +11,8 @@ const {
   yellow,
   green,
   lightRed,
-  cyan
+  cyan,
+  stripColors
 } = require("kolorist");
 
 console.log(argv)
@@ -46,38 +47,75 @@ async function init () {
 
     targetDir = name;
   }
-}
 
-const root = path.join(cwd, targetDir);
+  const root = path.join(cwd, targetDir);
 
-console.log(`\n download project in ${root}....`);
+  console.log(`\n download project in ${root}....`);
 
-// 是否存在文件夹
-if(!fs.existsSync(root)) {
-  /**
-   * @type {{ recursive: boolean  }} // 回调回接收创建的第一个路径作为参数
-   */
-  fs.mkdirSync(root, { recursive: true });
-} else {
-  const existing = fs.readdirSync(root);
-  if(existing.length) {
+  // 是否存在文件夹
+  if(!fs.existsSync(root)) {
     /**
-     * @type {{ yes: boolean }}
+     * @type {{ recursive: boolean  }} // 回调回接收创建的第一个路径作为参数
      */
-    const { yes } = prompt({
-      type: 'confirm',
-      name: 'yes',
-      initial: 'Y',
-      message: `taeget directory ${targetDir} is not empty. \n` + `Remove existing files and continue?`
-    });
+    fs.mkdirSync(root, { recursive: true });
+  } else {
+    const existing = fs.readdirSync(root);
+    if(existing.length) {
+      /**
+       * @type {{ yes: boolean }}
+       */
+      const { yes } = prompt({
+        type: 'confirm',
+        name: 'yes',
+        initial: 'Y',
+        message: `taeget directory ${targetDir} is not empty. \n` + `Remove existing files and continue?`
+      });
 
-    if(yes) {
-      emptyDir(root);
-    } else {
-      return;
+      if(yes) {
+        emptyDir(root);
+      } else {
+        return;
+      }
     }
   }
+
+  // select template
+  let template = argv.t || argv.template;
+  let message = 'select a template';
+  let isValidTemplate = false;
+
+  // -- template expects a value
+  if(typeof template === 'string') {
+    /**
+     * @type {{ t: string }}
+     */
+    const { t } = prompt({
+      type: 'select',
+      name: 't',
+      message,
+      choices: TEMPLATES
+    });
+
+    template = stripColors(t);
+  }
+
+  const templateDir = path.join(__dirname, `template-${template}`);
+
+  console.log(`templateDir is ${templateDir}`);
+
+  const write = (file, content) => {
+    const targetPath = renameFiles[file]
+      ? path.join(root, renameFiles[file])
+      : path.join(root, file);
+    if(content) {
+      fs.writeFileSync(targetPath, content);
+    } else {
+      copy(path.join(templateDir, file), targetPath);
+    }
+  };
 }
+
+
 
 
 

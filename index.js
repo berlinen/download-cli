@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const argv = require("minimist")(process.argv.slice(2));
 const { prompt } = require("enquirer");
-const { emptyDir } = require("./utils");
+const { emptyDir, copy } = require("./utils");
 
 const {
   yellow,
@@ -41,7 +41,7 @@ async function init () {
       type: "input",
       name: "name",
       message: "Project name:",
-      initial: "download-cli-project"
+      initial: "Project-template"
     })
 
     targetDir = name;
@@ -63,7 +63,7 @@ async function init () {
       /**
        * @type {{ yes: boolean }}
        */
-      const { yes } = prompt({
+      const { yes } = await prompt({
         type: 'confirm',
         name: 'yes',
         initial: 'Y',
@@ -80,21 +80,21 @@ async function init () {
 
   // select template
   let template = argv.t || argv.template;
-  let message = 'select a template';
+  let message = 'select a template:';
   let isValidTemplate = false;
 
   // -- template expects a value
-  if(typeof template === 'string') {
+  if (typeof template === 'string') {
     const availableTemplates = TEMPLATES.map(stripColors);
     isValidTemplate = availableTemplates.includes(template);
-    message = `${template} is not valid template. pleasr choose from below:`;
-  }
+    message = `${template} isn't a valid template. Please choose from below:`;
+  };
 
   if(!template || !isValidTemplate) {
     /**
      * @type {{ t: string }}
      */
-    const { t } = prompt({
+    const { t } = await prompt({
       type: 'select',
       name: 't',
       message,

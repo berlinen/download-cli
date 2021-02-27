@@ -6,7 +6,6 @@ const argv = require("minimist")(process.argv.slice(2));
 const { prompt } = require("enquirer");
 const { emptyDir } = require("./utils");
 
-
 const {
   yellow,
   green,
@@ -113,6 +112,26 @@ async function init () {
       copy(path.join(templateDir, file), targetPath);
     }
   };
+  // 写入文件
+  const files = fs.readdirSync(templateDir);
+  for(const file of files.filter(f => f !== 'package.json')) {
+    write(file);
+  };
+  //写入package.json
+  const pkg = require(path.join(templateDir, 'package.json'));
+  pkg.name = path.basename(root);
+  write('package.json', JSON.stringify(pkg, null, 2));
+
+  const pkgManager = /yarn/.test(process.env.npm_execpath)
+          ? 'yarn'
+          : 'npm';
+
+  console.log(`\nDone. Now run: \n`);
+
+  if(root !== cwd) {
+    console.log(`cd ${path.relative(cwd, root)}`);
+  };
+  
 }
 
 

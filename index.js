@@ -129,10 +129,17 @@ async function init () {
   console.log(`\nDone. Now run: \n`);
 
   if(root !== cwd) {
-    console.log(`cd ${path.relative(cwd, root)}`);
+    console.log(`   cd ${path.relative(cwd, root)}`);
   };
-  
+
+  console.log(`   ${pkgManager === 'yarn' ? `yarn` : `npm install`}`);
+  console.log(`   ${pkgManager === 'yarn' ? `yarn dev` : `npm run dev`}`);
+  console.log();
 }
+
+init().catch(e => {
+  console.error(e);
+});
 
 
 

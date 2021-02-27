@@ -85,6 +85,12 @@ async function init () {
 
   // -- template expects a value
   if(typeof template === 'string') {
+    const availableTemplates = TEMPLATES.map(stripColors);
+    isValidTemplate = availableTemplates.includes(template);
+    message = `${template} is not valid template. pleasr choose from below:`;
+  }
+
+  if(!template || !isValidTemplate) {
     /**
      * @type {{ t: string }}
      */
